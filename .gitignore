@@ -20,6 +20,7 @@ public/*
 build/*
 
 # AI tools
+.claude/
 _bmad-output/
 _bmad/
 openspec/
