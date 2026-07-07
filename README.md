@@ -149,7 +149,6 @@ Steps to make a release, using 2.1.2 as an example:
 
 ```
 bin/changeversion.sh -o 2.1.2-SNAPSHOT -n 2.1.2
-echo "2.1.2" > version.txt
 ```
 
 2. Commit the changes and tag the release
@@ -164,7 +163,6 @@ git push origin master v2.1.2
 
 ```
 bin/changeversion.sh -o 2.1.2 -n 2.1.3-SNAPSHOT
-echo "2.1.3-SNAPSHOT" > version.txt
 git commit -s -m "chore: set development version to 2.1.3-SNAPSHOT"
 git push origin master
 ```
