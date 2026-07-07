@@ -275,7 +275,7 @@ public class XlsSource implements Source {
 			if (rowiterator.hasNext()) {
 				rowiterator.next();
 			}
-			Map<String, RequisitionNode> nodeLabelRequisitionNodeMap = new HashMap<>();
+			Map<String, RequisitionNode> foreignIdRequisitionNodeMap = new HashMap<>();
 			while (rowiterator.hasNext()) {
 				Row row = rowiterator.next();
 				Cell cell = getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_NODE);
@@ -283,19 +283,31 @@ public class XlsSource implements Source {
 					continue;
 				}
 				String nodeLabel = XlsSource.getStringValueFromCell(cell);
-				RequisitionNode node = new RequisitionNode();
-				if (nodeLabelRequisitionNodeMap.containsKey(nodeLabel)) {
-					node = nodeLabelRequisitionNodeMap.get(nodeLabel);
-				} else {
-					node.setNodeLabel(nodeLabel);
-					node.setForeignId(nodeLabel);
-					nodeLabelRequisitionNodeMap.put(nodeLabel, node);
-					requisition.getNodes().add(node);
-				}
 
+				// The foreign ID is the unique key of a requisition node. When the ID_ column
+				// carries a value it identifies the node, otherwise the node label doubles as
+				// the foreign ID. Rows are merged into one node (several interfaces) only when
+				// they share this key, so two rows with the same label but different IDs
+				// become two distinct nodes rather than one node with a discarded ID.
 				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_FOREIGN_ID);
-				if (cell != null) {
-					node.setForeignId(XlsSource.getStringValueFromCell(cell));
+				String explicitForeignId = cell == null ? null : XlsSource.getStringValueFromCell(cell);
+				if (explicitForeignId != null && explicitForeignId.trim().isEmpty()) {
+					explicitForeignId = null;
+				}
+				String foreignId = explicitForeignId != null ? explicitForeignId : nodeLabel;
+
+				RequisitionNode node = foreignIdRequisitionNodeMap.get(foreignId);
+				if (node == null) {
+					node = new RequisitionNode();
+					node.setNodeLabel(nodeLabel);
+					node.setForeignId(foreignId);
+					foreignIdRequisitionNodeMap.put(foreignId, node);
+					requisition.getNodes().add(node);
+				} else if (!node.getNodeLabel().equals(nodeLabel)) {
+					throw new RuntimeException("Conflicting node labels for foreign ID '" + foreignId
+							+ "' in requisition '" + instance + "' at row '" + reportedRowNumber(row) + "' in file '"
+							+ xls.getAbsolutePath() + "': '" + node.getNodeLabel() + "' and '" + nodeLabel
+							+ "'. A foreign ID must identify exactly one node.");
 				}
 
 				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_LOCATION);
