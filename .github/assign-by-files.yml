@@ -5,6 +5,5 @@
 "docs/**/*":
   - indigo423
 
-".circleci/**/*":
-  - RangerRick
-  - mershad-manesh
+".github/workflows/**/*":
+  - indigo423
