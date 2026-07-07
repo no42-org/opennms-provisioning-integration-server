@@ -161,6 +161,23 @@ public class XlsSourceTest {
 	}
 
 	@Test
+	public void testContinuationRowWithoutIdMergesIntoNode() throws Exception {
+		// documented multi-interface pattern: the ID_ appears on the first row only,
+		// continuation rows repeat just the node label
+		xlsSource = sourceFor("continuation-row", new String[][] { { "ID_", "Node_", "IP_", "MgmtType_", "svc_" },
+				{ "12345678", "nodelabel1", "10.1.1.1", "P", "ICMP" },
+				{ null, "nodelabel1", "10.1.1.2", "S", "ICMP" } });
+
+		Requisition requisition = (Requisition) xlsSource.dump();
+
+		assertEquals(1, requisition.getNodes().size());
+		RequisitionNode node = requisition.getNodes().get(0);
+		assertEquals("nodelabel1", node.getNodeLabel());
+		assertEquals("12345678", node.getForeignId());
+		assertEquals(2, node.getInterfaces().size());
+	}
+
+	@Test
 	public void testSameForeignIdConflictingLabelsFailsHard() throws Exception {
 		// one foreign id cannot identify two different node labels
 		xlsSource = sourceFor("conflicting-labels", new String[][] { { "ID_", "Node_", "IP_", "MgmtType_", "svc_" },
@@ -174,6 +191,23 @@ public class XlsSourceTest {
 			assertThat(ex.getMessage(), containsString("100"));
 			assertThat(ex.getMessage(), containsString("nodeA"));
 			assertThat(ex.getMessage(), containsString("nodeB"));
+			assertThat(ex.getMessage(), containsString("row '3'"));
+		}
+	}
+
+	@Test
+	public void testLabelCollidingWithExplicitForeignIdFailsHard() throws Exception {
+		// a continuation row whose label equals another node's explicit foreign id must not
+		// silently mint a second node with a duplicate foreign id
+		xlsSource = sourceFor("label-id-collision", new String[][] { { "ID_", "Node_", "IP_", "MgmtType_", "svc_" },
+				{ "foo", "nodeA", "10.1.1.1", "P", "ICMP" }, { null, "foo", "10.1.1.2", "P", "ICMP" } });
+
+		try {
+			xlsSource.dump();
+			fail("expected RuntimeException for foreign id / label collision");
+		} catch (RuntimeException ex) {
+			assertThat(ex.getMessage(), containsString("foo"));
+			assertThat(ex.getMessage(), containsString("nodeA"));
 			assertThat(ex.getMessage(), containsString("row '3'"));
 		}
 	}
