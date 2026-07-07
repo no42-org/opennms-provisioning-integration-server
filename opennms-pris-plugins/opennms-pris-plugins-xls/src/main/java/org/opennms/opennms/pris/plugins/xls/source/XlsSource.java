@@ -99,6 +99,7 @@ public class XlsSource implements Source {
 
 	private File xls;
 	private final String encoding;
+	private int rowNumberOffset = 0;
 
 	public static String getStringValueFromCell(Cell cell) {
 		String value = null;
@@ -179,6 +180,7 @@ public class XlsSource implements Source {
 						cell.setCellValue(headers[headercount].trim());
 					}
 					rowNum++;
+					rowNumberOffset = 1;
 				}
 				
 				// create rest of spreadsheet with csv data in file see
@@ -245,100 +247,119 @@ public class XlsSource implements Source {
 
 		Requisition requisition = new Requisition().withForeignSource(instance);
 		xls = new File(getXlsFile());
-		Workbook workbook = getWorkbook(xls);
-		List<String> sheetNames = new ArrayList<String>();
-		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-			sheetNames.add(workbook.getSheetName(i));
+		try (Workbook workbook = getWorkbook(xls)) {
+			List<String> sheetNames = new ArrayList<String>();
+			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+				sheetNames.add(workbook.getSheetName(i));
+			}
+			if (!sheetNames.contains(instance)) {
+				LOGGER.error("can not find sheet {} in workbook from file {}", instance, xls.getAbsolutePath());
+				throw new RuntimeException(
+						"can not find sheet " + instance + " in workbook from file " + xls.getAbsolutePath());
+			}
+
+			Sheet sheet = workbook.getSheet(instance);
+			if (sheet == null) {
+				LOGGER.error("can not read sheet {} in workbook from file {} check the configured encoding {}",
+						instance, xls.getAbsolutePath(), encoding);
+				throw new RuntimeException("can not read sheet " + instance + " from file " + xls.getAbsolutePath()
+						+ " check the encoding " + encoding + ".");
+			}
+
+			requiredColumns = initializeRequiredColumns(sheet);
+			optionalMultiColumns = initializeOptionalMultiColumns(sheet);
+			optionalUniquHeaders = initializeOptionalUniquHeaders(sheet);
+			assetColumns = initializeAssetColumns(sheet);
+			metaDataColumns = initializeMetaDataColumns(sheet);
+
+			RequisitionInterface reqInterface;
+			Iterator<Row> rowiterator = sheet.rowIterator();
+			if (rowiterator.hasNext()) {
+				rowiterator.next();
+			}
+			Map<String, RequisitionNode> nodeLabelRequisitionNodeMap = new HashMap<>();
+			while (rowiterator.hasNext()) {
+				Row row = rowiterator.next();
+				Cell cell = getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_NODE);
+				if (cell == null) {
+					continue;
+				}
+				String nodeLabel = XlsSource.getStringValueFromCell(cell);
+				RequisitionNode node = new RequisitionNode();
+				if (nodeLabelRequisitionNodeMap.containsKey(nodeLabel)) {
+					node = nodeLabelRequisitionNodeMap.get(nodeLabel);
+				} else {
+					node.setNodeLabel(nodeLabel);
+					node.setForeignId(nodeLabel);
+					nodeLabelRequisitionNodeMap.put(nodeLabel, node);
+					requisition.getNodes().add(node);
+				}
+
+				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_FOREIGN_ID);
+				if (cell != null) {
+					node.setForeignId(XlsSource.getStringValueFromCell(cell));
+				}
+
+				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_LOCATION);
+				if (cell != null) {
+					node.setLocation(XlsSource.getStringValueFromCell(cell));
+				}
+
+				// adding parent data
+				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_FOREIGN_SOURCE);
+				if (cell != null) {
+					node.setParentForeignSource(XlsSource.getStringValueFromCell(cell));
+				}
+
+				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_FOREIGN_ID);
+				if (cell != null) {
+					node.setParentForeignId(XlsSource.getStringValueFromCell(cell));
+				}
+
+				cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_NODE_LABEL);
+				if (cell != null) {
+					node.setParentNodeLabel(XlsSource.getStringValueFromCell(cell));
+				}
+
+				node.getCategories().addAll(getCategoriesByRow(row));
+
+				// adding assets
+				node.getAssets().addAll(getAssetsByRow(row));
+
+				// adding meta-data
+				node.getMetaDatas().addAll(getMetaDataByRow(row));
+
+				// Add interface
+				reqInterface = getInterfaceByRow(row);
+
+				if (PrimaryType.PRIMARY.equals(reqInterface.getSnmpPrimary())) {
+					for (RequisitionInterface existingInterface : node.getInterfaces()) {
+						if (PrimaryType.PRIMARY.equals(existingInterface.getSnmpPrimary())) {
+							throw new InvalidInterfaceException("Duplicate primary interface on node '"
+									+ node.getNodeLabel() + "' (foreign ID '" + node.getForeignId()
+									+ "') in requisition '" + instance + "': interface '" + reqInterface.getIpAddr()
+									+ "' at row '" + reportedRowNumber(row) + "' in file '" + xls.getAbsolutePath()
+									+ "' is marked as primary, but interface '" + existingInterface.getIpAddr()
+									+ "' is already the primary interface.");
+						}
+					}
+				}
+
+				// Add services to the interface
+				reqInterface.getMonitoredServices().addAll(getServicesByRow(row));
+				node.getInterfaces().add(reqInterface);
+			}
+			LOGGER.info("xls source delivered for requisition '{}' '{}' nodes", instance,
+					requisition.getNodes().size());
+			return requisition;
 		}
-		if (!sheetNames.contains(instance)) {
-			LOGGER.error("can not find sheet {} in workbook from file {}", instance, xls.getAbsolutePath());
-			workbook.close();
-			throw new RuntimeException(
-					"can not find sheet " + instance + " in workbook from file " + xls.getAbsolutePath());
-		}
+	}
 
-		Sheet sheet = workbook.getSheet(instance);
-		if (sheet == null) {
-			LOGGER.error("can not read sheet {} in workbook from file {} check the configured encoding {}", instance,
-					xls.getAbsolutePath(), encoding);
-			workbook.close();
-			throw new RuntimeException("can not read sheet " + instance + " from file " + xls.getAbsolutePath()
-					+ " check the encoding " + encoding + ".");
-		}
-
-		requiredColumns = initializeRequiredColumns(sheet);
-		optionalMultiColumns = initializeOptionalMultiColumns(sheet);
-		optionalUniquHeaders = initializeOptionalUniquHeaders(sheet);
-		assetColumns = initializeAssetColumns(sheet);
-		metaDataColumns = initializeMetaDataColumns(sheet);
-
-		RequisitionInterface reqInterface;
-		Iterator<Row> rowiterator = sheet.rowIterator();
-		if (rowiterator.hasNext()) {
-			rowiterator.next();
-		}
-		Map<String, RequisitionNode> nodeLabelRequisitionNodeMap = new HashMap<>();
-		while (rowiterator.hasNext()) {
-			Row row = rowiterator.next();
-			Cell cell = getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_NODE);
-			if (cell == null) {
-				continue;
-			}
-			String nodeLabel = XlsSource.getStringValueFromCell(cell);
-			RequisitionNode node = new RequisitionNode();
-			if (nodeLabelRequisitionNodeMap.containsKey(nodeLabel)) {
-				node = nodeLabelRequisitionNodeMap.get(nodeLabel);
-			} else {
-				node.setNodeLabel(nodeLabel);
-				node.setForeignId(nodeLabel);
-				nodeLabelRequisitionNodeMap.put(nodeLabel, node);
-				requisition.getNodes().add(node);
-			}
-
-			cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_FOREIGN_ID);
-			if (cell != null) {
-				node.setForeignId(XlsSource.getStringValueFromCell(cell));
-			}
-
-			cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_LOCATION);
-			if (cell != null) {
-				node.setLocation(XlsSource.getStringValueFromCell(cell));
-			}
-
-			// adding parent data
-			cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_FOREIGN_SOURCE);
-			if (cell != null) {
-				node.setParentForeignSource(XlsSource.getStringValueFromCell(cell));
-			}
-
-			cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_FOREIGN_ID);
-			if (cell != null) {
-				node.setParentForeignId(XlsSource.getStringValueFromCell(cell));
-			}
-
-			cell = getRelevantColumnID(row, OPTIONAL_UNIQUE_HEADERS.PREFIX_PARENT_NODE_LABEL);
-			if (cell != null) {
-				node.setParentNodeLabel(XlsSource.getStringValueFromCell(cell));
-			}
-
-			node.getCategories().addAll(getCategoriesByRow(row));
-
-			// adding assets
-			node.getAssets().addAll(getAssetsByRow(row));
-
-			// adding meta-data
-			node.getMetaDatas().addAll(getMetaDataByRow(row));
-
-			// Add interface
-			reqInterface = getInterfaceByRow(row);
-
-			// Add services to the interface
-			reqInterface.getMonitoredServices().addAll(getServicesByRow(row));
-			node.getInterfaces().add(reqInterface);
-		}
-		workbook.close();
-		LOGGER.info("xls source delivered for requisition '{}' '{}' nodes", instance, requisition.getNodes().size());
-		return requisition;
+	// spreadsheet row numbers are reported 1-based to match what the user sees;
+	// rowNumberOffset compensates for the synthetic header row injected for
+	// headerless csv files so the number matches the file's line numbering
+	private int reportedRowNumber(Row row) {
+		return row.getRowNum() + 1 - rowNumberOffset;
 	}
 
 	private Cell getRelevantColumnID(Row row, REQUIRED_UNIQUE_PREFIXES prefix) {
@@ -544,14 +565,14 @@ public class XlsSource implements Source {
 		if (ip == null) {
 			throw new InvalidInterfaceException("Null IP-Address for node '"
 					+ getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_NODE).getStringCellValue().trim()
-					+ "' at row '" + row.getRowNum(), null);
+					+ "' at row '" + reportedRowNumber(row), null);
 		}
 		try {
 			reqInterface.setIpAddr(ip.trim());
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInterfaceException("Invalid IP-Address for node '"
 					+ getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_NODE).getStringCellValue().trim()
-					+ "' at row '" + row.getRowNum() + "' and IP '" + ip.trim() + "'", ex);
+					+ "' at row '" + reportedRowNumber(row) + "' and IP '" + ip.trim() + "'", ex);
 		}
 
 		String interfaceType = XlsSource.getStringValueFromCell(
