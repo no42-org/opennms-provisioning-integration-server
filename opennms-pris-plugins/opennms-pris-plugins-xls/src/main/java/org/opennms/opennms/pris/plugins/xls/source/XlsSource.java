@@ -99,7 +99,6 @@ public class XlsSource implements Source {
 
 	private File xls;
 	private final String encoding;
-	private int rowNumberOffset = 0;
 
 	public static String getStringValueFromCell(Cell cell) {
 		String value = null;
@@ -180,7 +179,6 @@ public class XlsSource implements Source {
 						cell.setCellValue(headers[headercount].trim());
 					}
 					rowNum++;
-					rowNumberOffset = 1;
 				}
 				
 				// create rest of spreadsheet with csv data in file see
@@ -356,10 +354,18 @@ public class XlsSource implements Source {
 	}
 
 	// spreadsheet row numbers are reported 1-based to match what the user sees;
-	// rowNumberOffset compensates for the synthetic header row injected for
-	// headerless csv files so the number matches the file's line numbering
+	// for headerless csv files getWorkbook injects a synthetic header row that
+	// does not exist in the file, so drop it to keep the number aligned with
+	// the file's line numbering
 	private int reportedRowNumber(Row row) {
-		return row.getRowNum() + 1 - rowNumberOffset;
+		return hasInjectedHeader() ? row.getRowNum() : row.getRowNum() + 1;
+	}
+
+	private boolean hasInjectedHeader() {
+		String fileName = xls.getName();
+		int i = fileName.lastIndexOf('.');
+		String extension = i > 0 ? fileName.substring(i + 1) : null;
+		return "csv".equals(extension) && csvHeaders != null && !csvHeaders.isEmpty();
 	}
 
 	private Cell getRelevantColumnID(Row row, REQUIRED_UNIQUE_PREFIXES prefix) {
@@ -575,8 +581,10 @@ public class XlsSource implements Source {
 					+ "' at row '" + reportedRowNumber(row) + "' and IP '" + ip.trim() + "'", ex);
 		}
 
-		String interfaceType = XlsSource.getStringValueFromCell(
-				getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_INTERFACE_MANGEMENT_TYPE)).trim();
+		Cell interfaceTypeCell = getRelevantColumnID(row, REQUIRED_UNIQUE_PREFIXES.PREFIX_INTERFACE_MANGEMENT_TYPE);
+		String interfaceTypeValue = interfaceTypeCell == null ? null
+				: XlsSource.getStringValueFromCell(interfaceTypeCell);
+		String interfaceType = interfaceTypeValue == null ? "" : interfaceTypeValue.trim();
 		if (interfaceType.equalsIgnoreCase(INTERFACE_TYPE_PRIMARY)) {
 			reqInterface.setSnmpPrimary(PrimaryType.PRIMARY);
 		} else if (interfaceType.equalsIgnoreCase(INTERFACE_TYPE_SECONDARY)) {

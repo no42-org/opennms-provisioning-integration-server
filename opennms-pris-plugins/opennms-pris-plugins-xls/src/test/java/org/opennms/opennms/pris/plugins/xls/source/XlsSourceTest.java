@@ -132,6 +132,37 @@ public class XlsSourceTest {
 	}
 
 	@Test
+	public void testBlankManagementTypeDefaultsToNotEligible() throws Exception {
+		File xlsxFile = new File("target/blank-mgmttype.xlsx");
+		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+			Sheet sheet = workbook.createSheet("blank-mgmttype");
+			Row header = sheet.createRow(0);
+			String[] headers = { "Node_", "IP_", "MgmtType_", "svc_" };
+			for (int column = 0; column < headers.length; column++) {
+				header.createCell(column).setCellValue(headers[column]);
+			}
+			// data row omits the MgmtType_ cell entirely (short row)
+			Row dataRow = sheet.createRow(1);
+			dataRow.createCell(0).setCellValue("nodelabel1");
+			dataRow.createCell(1).setCellValue("10.1.1.1");
+			try (FileOutputStream outputStream = new FileOutputStream(xlsxFile)) {
+				workbook.write(outputStream);
+			}
+		}
+
+		MockInstanceConfiguration config = new MockInstanceConfiguration("blank-mgmttype");
+		config.set("encoding", "ISO-8859-1");
+		config.set("file", xlsxFile.toPath());
+
+		xlsSource = new XlsSource(config);
+
+		Requisition requisition = (Requisition) xlsSource.dump();
+		RequisitionNode node = requisition.getNodes().get(0);
+		RequisitionInterface iface = RequisitionUtils.findInterface(node, "10.1.1.1");
+		assertEquals(PrimaryType.NOT_ELIGIBLE, iface.getSnmpPrimary());
+	}
+
+	@Test
 	public void testCsvSourceNoHeader() throws Exception {
 		MockInstanceConfiguration config = new MockInstanceConfiguration("testcsv-noheaders");
 		config.set("encoding", "ISO-8859-1");
