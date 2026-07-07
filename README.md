@@ -142,20 +142,31 @@ Releases are published to the following places:
 
 All other pushes and pull requests are just built, packaged and smoke tested.
 
-Steps to make a release:
+The master branch carries a `-SNAPSHOT` development version between releases.
+Steps to make a release, using 2.1.2 as an example:
 
-1. Set the new version number in docs and code artifacts
+1. Set the release version number in docs and code artifacts
 
 ```
-bin/changeversion.sh -o BLEEDING -n 1.2.1
+bin/changeversion.sh -o 2.1.2-SNAPSHOT -n 2.1.2
+echo "2.1.2" > version.txt
 ```
 
 2. Commit the changes and tag the release
 
 ```
-git commit -m "release: version 1.2.1"
-git tag -a v1.2.1 -m "Release 1.2.1"
-git push origin v1.2.1
+git commit -s -m "chore: release version 2.1.2"
+git tag -a v2.1.2 -m "Release 2.1.2"
+git push origin master v2.1.2
+```
+
+3. Set the next development version
+
+```
+bin/changeversion.sh -o 2.1.2 -n 2.1.3-SNAPSHOT
+echo "2.1.3-SNAPSHOT" > version.txt
+git commit -s -m "chore: set development version to 2.1.3-SNAPSHOT"
+git push origin master
 ```
 
 The CI/CD workflows can be found in the `.github/workflows` directory.
