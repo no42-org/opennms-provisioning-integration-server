@@ -25,3 +25,14 @@ updates:
       include: "scope"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    target-branch: "master"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    schedule:
+      interval: "weekly"
