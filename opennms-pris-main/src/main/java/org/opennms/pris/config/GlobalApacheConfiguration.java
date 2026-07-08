@@ -1,67 +1,64 @@
-/*******************************************************************************
- * This file is part of OpenNMS(R).
- *
- * Copyright (C) 2014 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2023 The OpenNMS Group, Inc.
- *
- * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
- *
- * OpenNMS(R) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- *
- * OpenNMS(R) is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenNMS(R).  If not, see:
- *      http://www.gnu.org/licenses/
- *
- * For more information contact:
- *     OpenNMS(R) Licensing <license@opennms.org>
- *     http://www.opennms.org/
- *     http://www.opennms.com/
- *******************************************************************************/
+/*
+ * Copyright 2014 The OpenNMS Group, Inc.
+ * SPDX-License-Identifier: GPL-3.0-only
+ * Created by Ronny Trommer <ronny@opennms.com>
+ */
 
 package org.opennms.pris.config;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.SystemConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.opennms.pris.api.Configuration;
 
 public class GlobalApacheConfiguration extends AbstractApacheConfiguration implements Configuration {
 
-    private static org.apache.commons.configuration.Configuration createConfig(final Path base) {
+    private static org.apache.commons.configuration2.Configuration createConfig(final Path base) {
+        final Path path = base.resolve("global.properties");
+
+        // Raise a clear error if the config file is missing. This matches
+        // InstanceApacheConfiguration and preserves the fail-loud behaviour of
+        // Commons Configuration 1.x (which threw when the file could not be loaded).
+        if (!Files.exists(path)) {
+            throw new RuntimeException("Config file not found: " + path);
+        }
+
         // Load system and file properties
-        final org.apache.commons.configuration.SystemConfiguration systemConfig;
-        final org.apache.commons.configuration.PropertiesConfiguration propertiesConfig;
+        final SystemConfiguration systemConfig = new SystemConfiguration();
+
+        final PropertiesConfiguration propertiesConfig;
         try {
-            systemConfig = new org.apache.commons.configuration.SystemConfiguration();
-            
-            propertiesConfig = new org.apache.commons.configuration.PropertiesConfiguration(base.resolve("global.properties").toFile());
-            
+            // The comma list delimiter preserves Commons Configuration 1.x behaviour:
+            // a property with comma-separated values is read as a multi-valued list.
+            propertiesConfig = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                    .configure(new Parameters().properties()
+                            .setFile(path.toFile())
+                            .setListDelimiterHandler(new DefaultListDelimiterHandler(',')))
+                    .getConfiguration();
+
         } catch (final ConfigurationException ex) {
             throw new RuntimeException(ex);
         }
-        
-        // Build composition of system properties and config file
-        return new CompositeConfiguration() {{
-            addConfiguration(systemConfig);
-            addConfiguration(propertiesConfig);
 
-            setThrowExceptionOnMissing(true);
-        }};
+        // Build composition of system properties and config file
+        final CompositeConfiguration composite = new CompositeConfiguration();
+        composite.addConfiguration(systemConfig);
+        composite.addConfiguration(propertiesConfig);
+        composite.setThrowExceptionOnMissing(true);
+        return composite;
     }
 
     private final Path basePath;
-    
+
     public GlobalApacheConfiguration(final Path basePath) {
         super(createConfig(basePath));
-        
+
         this.basePath = basePath;
     }
 
