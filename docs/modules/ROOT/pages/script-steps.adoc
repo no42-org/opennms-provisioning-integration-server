@@ -105,3 +105,13 @@ include::example$scriptsteps/persistRequisitionSize.groovy[]
 ----
 include::example$scriptsteps/selectNodeByCategory.groovy[]
 ----
+
+The following script step makes colliding node labels unique.
+A source such as xls/csv turns two rows that share a node label but carry different `ID_` values into two distinct nodes with the same label.
+This script keeps the first occurrence and appends a numeric suffix (`label`, `label_1`, `label_2`, ...) to each duplicate.
+
+.Example script step 10
+[source,java]
+----
+include::example$scriptsteps/deduplicateNodeLabels.groovy[]
+----
