@@ -172,6 +172,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.7.0</version>
+                <configuration>
+                    <!-- Keep the useful doclint checks (broken references, malformed
+                         HTML, bad @param names) but do not warn about missing comments:
+                         the model layer is largely data-table enums and XJC-generated
+                         sources where per-element prose adds no value. -->
+                    <doclint>all,-missing</doclint>
+                </configuration>
                 <executions>
                     <execution>
                         <id>generate-jar</id>
