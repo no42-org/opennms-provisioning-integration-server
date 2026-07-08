@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.11_9-jre-ubi9-minimal
+FROM eclipse-temurin:24.0.2_12-jre-ubi9-minimal
 
 ARG OPENNMS_PRIS_VERSION=SNAPSHOT
 ARG OPENNMS_PRIS_HOME=/opt/opennms-pris
