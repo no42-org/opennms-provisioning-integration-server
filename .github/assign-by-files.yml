@@ -1,9 +1,0 @@
----
-"**/*.adoc":
-  - indigo423
-
-"docs/**/*":
-  - indigo423
-
-".github/workflows/**/*":
-  - indigo423
