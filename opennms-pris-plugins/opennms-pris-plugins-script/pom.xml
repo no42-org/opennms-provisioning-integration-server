@@ -18,20 +18,21 @@
     <dependencies>
         <!-- Languages -->
         <dependency>
-            <groupId>org.beanshell</groupId>
+            <groupId>org.apache-extras.beanshell</groupId>
             <artifactId>bsh</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+        </dependency>
+        <!-- Apache Ivy is the resolver behind Groovy @Grab/Grape in user scripts -->
         <dependency>
             <groupId>org.apache.ivy</groupId>
             <artifactId>ivy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.gpars</groupId>
-            <artifactId>gpars</artifactId>
         </dependency>
 
         <!-- Utilities -->
@@ -39,6 +40,14 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>opennms-pris-api</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
