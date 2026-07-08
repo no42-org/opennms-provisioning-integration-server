@@ -169,7 +169,7 @@ User and developer documentation lives under `docs/` and is built with [Antora].
 
 - CI/CD system: [GitHub Actions]
 - Container images: [GitHub Container Registry]
-- Issue and bug tracking: [JIRA]
+- Issue and bug tracking: [GitHub Issues]
 - Source code: [GitHub]
 - Chat: [Web Chat]
 - Maintainer: ronny@opennms.org
@@ -182,7 +182,7 @@ the full text.
 [GitHub]: https://github.com/no42-org/opennms-provisioning-integration-server
 [GitHub Actions]: https://github.com/no42-org/opennms-provisioning-integration-server/actions
 [GitHub Container Registry]: https://github.com/no42-org/opennms-provisioning-integration-server/pkgs/container/pris
-[JIRA]: https://issues.opennms.org/projects/PRIS
+[GitHub Issues]: https://github.com/no42-org/opennms-provisioning-integration-server/issues
 [OpenJDK]: https://openjdk.org/
 [Maven]: https://maven.apache.org/
 [git-scm]: https://git-scm.com/
