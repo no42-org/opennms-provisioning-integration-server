@@ -29,9 +29,10 @@
         <apacheDerbyVersion>10.14.2.0</apacheDerbyVersion>
         <beanshellVersion>2.0b6</beanshellVersion>
         <chQosLogbackVersion>1.5.6</chQosLogbackVersion>
-        <commonsConfigurationVersion>1.10</commonsConfigurationVersion>
+        <commonsBeanutilsVersion>1.11.0</commonsBeanutilsVersion>
+        <commonsConfigurationVersion>2.15.1</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
-        <commonsLang3Version>3.14.0</commonsLang3Version>
+        <commonsLang3Version>3.20.0</commonsLang3Version>
         <downloadMavenPluginVersion>1.13.0</downloadMavenPluginVersion>
         <groovyVersion>4.0.32</groovyVersion>
         <hamcrestVersion>3.0</hamcrestVersion>
@@ -102,9 +103,24 @@
 
             <!-- Configuration -->
             <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
                 <version>${commonsConfigurationVersion}</version>
+            </dependency>
+            <!-- commons-configuration2 declares commons-beanutils as optional, but
+                 its configuration builders need it at runtime; pull it in explicitly. -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commonsBeanutilsVersion}</version>
+            </dependency>
+            <!-- Pin commons-lang3 as the single source of truth: commons-configuration2
+                 requires >= 3.18 (ObjectUtils.getIfNull) and plugins shade their own copy,
+                 so a stale transitive version must not win on the shared runtime classpath. -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commonsLang3Version}</version>
             </dependency>
 
             <!-- Web-Server -->
@@ -160,8 +176,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mavenCompilerPluginVersion}</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>21</release>
                     <!-- -processing: the metainf-services annotation processor deliberately
                          does not claim @MetaInfServices (so other processors can also see it),
                          and test frameworks use runtime annotations with no processor; the
