@@ -9,7 +9,17 @@ The first script step reads the requisition from the mapper.
 The second script step reads the requisition provided by the first script step and so on.
 Additionally every script step can access the configuration of {page-component-title} and the raw result of the source.
 The script steps are executed by the JVM following the JSR-223 specification. Therefore all JSR-223 supported languages can be used to write script steps.
-By default runtimes for Groovy 2.3.3 and Beanshell 2.0b5 are provided out of the box.
+By default runtimes for Groovy 4 and BeanShell 2.0b6 are provided out of the box.
+
+Groovy scripts can pull additional libraries at evaluation time with Grape's `@Grab` annotation (resolved by Apache Ivy); alternatively, drop extra jars into the `lib` folder of {page-component-title}.
+
+[NOTE]
+.Upgrading scripts from {page-component-title} 2.1.x
+====
+The bundled Groovy runtime moved from 2.x to 4.x and the GPars library was removed.
+Custom scripts written for Groovy 2 may need small updates for Groovy 4 (see the https://groovy-lang.org/releasenotes/groovy-4.0.html[Groovy 4.0 release notes]); scripts that relied on GPars must supply a compatible jar in the `lib` folder.
+The Groovy Maven coordinates also changed from `org.codehaus.groovy` to `org.apache.groovy`, which only affects scripts importing Groovy internals.
+====
 
 Every script step has to provide a Requisition object as its result.
 For every request of a requisition each script step is reloaded.

@@ -27,14 +27,13 @@
 
         <!-- Version settings -->
         <apacheDerbyVersion>10.14.2.0</apacheDerbyVersion>
-        <beanshellVersion>2.0b5</beanshellVersion>
+        <beanshellVersion>2.0b6</beanshellVersion>
         <chQosLogbackVersion>1.5.6</chQosLogbackVersion>
         <commonsConfigurationVersion>1.10</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
         <commonsLang3Version>3.14.0</commonsLang3Version>
         <downloadMavenPluginVersion>1.13.0</downloadMavenPluginVersion>
-        <gparsVersion>1.2.1</gparsVersion>
-        <groovyVersion>2.4.21</groovyVersion>
+        <groovyVersion>4.0.32</groovyVersion>
         <hamcrestVersion>3.0</hamcrestVersion>
         <httpComponentsVersion>4.5.14</httpComponentsVersion>
         <ivyVersion>2.5.2</ivyVersion>
@@ -130,8 +129,13 @@
             </dependency>
 
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovyVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
                 <version>${groovyVersion}</version>
             </dependency>
             <dependency>
@@ -139,14 +143,9 @@
                 <artifactId>ivy</artifactId>
                 <version>${ivyVersion}</version>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.gpars</groupId>
-                <artifactId>gpars</artifactId>
-                <version>${gparsVersion}</version>
-            </dependency>
 
             <dependency>
-                <groupId>org.beanshell</groupId>
+                <groupId>org.apache-extras.beanshell</groupId>
                 <artifactId>bsh</artifactId>
                 <version>${beanshellVersion}</version>
             </dependency>

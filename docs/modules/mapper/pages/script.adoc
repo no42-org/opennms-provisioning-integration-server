@@ -20,6 +20,13 @@ mapper.lang=javascript
 mapper.file = myJavaScriptSource.js
 ----
 
+[NOTE]
+====
+No JavaScript engine ships with {page-component-title}, and the JDK's built-in Nashorn engine was removed in Java 15.
+To use `mapper.lang=javascript`, add a JSR-223 JavaScript engine (for example http://en.wikipedia.org/wiki/Rhino_%28JavaScript_engine%29[Rhino]) as a jar in the `lib` folder.
+The engines bundled out of the box are Groovy and BeanShell.
+====
+
 If you don't set the language `lang` property the script engine tries to detect the language by evaluating the file extension.
 
 [options="header",autowidth"]
