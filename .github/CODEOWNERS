@@ -1,0 +1,10 @@
+# Code owners are auto-requested for review when a pull request touches a
+# matching path. This replaces the deprecated shufo/auto-assign-reviewer-by-files
+# action (its last release, v1.2.1, still runs on the EOL Node.js 20) and the
+# .github/assign-by-files.yml config with GitHub's native mechanism.
+#
+# Later matches take precedence; each pattern below maps to the same owner.
+
+*.adoc               @indigo423
+/docs/               @indigo423
+/.github/workflows/  @indigo423
