@@ -25,6 +25,15 @@ updates:
       include: "scope"
     schedule:
       interval: "daily"
+    ignore:
+      # jaxb-core/jaxb-impl 3.x+ moved to the jakarta.xml.bind namespace.
+      # The model still uses javax.xml.bind (jaxb-api 2.3.1, the JAXB2 codegen
+      # plugin and jaxb2-basics), so a major bump here needs a coordinated
+      # javax -> jakarta migration, not an isolated version bump.
+      - dependency-name: "com.sun.xml.bind:jaxb-core"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.sun.xml.bind:jaxb-impl"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "docker"
     directory: "/docker"
