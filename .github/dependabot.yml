@@ -3,7 +3,7 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
     commit-message:
@@ -14,7 +14,7 @@ updates:
 
   - package-ecosystem: "maven"
     directory: "/"
-    target-branch: "master"
+    target-branch: "main"
     reviewers:
       - "gallenc"
       - "OpenNMS/dependabot-reviewers-maven"
@@ -37,7 +37,7 @@ updates:
 
   - package-ecosystem: "docker"
     directory: "/docker"
-    target-branch: "master"
+    target-branch: "main"
     labels:
       - "dependencies"
     commit-message:
