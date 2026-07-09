@@ -34,6 +34,15 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "com.sun.xml.bind:jaxb-impl"
         update-types: ["version-update:semver-major"]
+      # jaxb2-basics 2.x relocated the runtime packages
+      # (org.jvnet.jaxb2_commons.lang / .locator.util) as part of the same
+      # javax -> jakarta move. The XJC plugin (jaxb2-basics) and its runtime
+      # (jaxb2-basics-runtime) must stay in lockstep on 0.x until that
+      # migration happens, so ignore isolated major bumps of either.
+      - dependency-name: "org.jvnet.jaxb2_commons:jaxb2-basics"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.jvnet.jaxb2_commons:jaxb2-basics-runtime"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "docker"
     directory: "/docker"
