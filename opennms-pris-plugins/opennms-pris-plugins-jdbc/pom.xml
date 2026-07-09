@@ -40,6 +40,21 @@
             <version>${apacheDerbyVersion}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Since Derby 10.15 the engine, shared classes and the embedded
+             JDBC driver (EmbeddedDriver, now in derbytools) live in separate
+             artifacts, so pull them in explicitly for the test suite. -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyshared</artifactId>
+            <version>${apacheDerbyVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${apacheDerbyVersion}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
