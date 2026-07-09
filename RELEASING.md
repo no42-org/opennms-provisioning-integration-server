@@ -19,14 +19,14 @@ The [`release`](.github/workflows/release.yml) workflow reacts to `v*` tags and:
 5. Creates a GitHub release for the tag with auto-generated notes and attaches
    the `.tar.gz` and `.zip` archives.
 
-The `master` branch carries a `-SNAPSHOT` development version between releases.
+The `main` branch carries a `-SNAPSHOT` development version between releases.
 All non-tag pushes and pull requests are only built, packaged and smoke tested
 by the [`ci`](.github/workflows/ci.yml) workflow — they do not publish anything.
 
 ## Prerequisites
 
-* Push access to `master` and permission to push tags.
-* A clean, up-to-date `master` working tree that builds green
+* Push access to `main` and permission to push tags.
+* A clean, up-to-date `main` working tree that builds green
   (`make compile`).
 * Nothing else is required for the pipeline itself: the release workflow uses
   the built-in `GITHUB_TOKEN` and needs **no repository secrets**. Images are
@@ -60,7 +60,7 @@ make compile
 ```
 git commit -s -am "chore: release version 2.1.2"
 git tag -a v2.1.2 -m "Release 2.1.2"
-git push origin master v2.1.2
+git push origin main v2.1.2
 ```
 
 Pushing the `v2.1.2` tag starts the release workflow. Watch it in the
@@ -71,7 +71,7 @@ repository's **Actions** tab until it completes.
 ```
 bin/changeversion.sh -o 2.1.2 -n 2.1.3-SNAPSHOT
 git commit -s -am "chore: set development version to 2.1.3-SNAPSHOT"
-git push origin master
+git push origin main
 ```
 
 ## After the release
