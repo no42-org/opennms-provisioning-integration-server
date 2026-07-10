@@ -185,11 +185,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mavenCompilerPluginVersion}</version>
                 <configuration>
-                    <release>25</release>
+                    <!-- Target Java 21 bytecode so the project builds on JDK 21+ and the
+                         tarball runs on a JDK 21 JRE, even though CI compiles on and the
+                         container ships JDK 25. -->
+                    <release>21</release>
                     <!-- JDK 23+ no longer runs annotation processors discovered on the
-                         compile classpath unless processing is explicitly requested. Force
-                         full processing so the metainf-services processor keeps generating
-                         the plugin SPI META-INF/services descriptors; without this the
+                         compile classpath unless processing is explicitly requested. CI
+                         compiles on JDK 25, so force full processing to keep the
+                         metainf-services processor generating the plugin SPI
+                         META-INF/services descriptors; without this the
                          sources/drivers/mappers are silently undiscoverable at runtime. -->
                     <proc>full</proc>
                     <!-- -processing: the metainf-services annotation processor deliberately
