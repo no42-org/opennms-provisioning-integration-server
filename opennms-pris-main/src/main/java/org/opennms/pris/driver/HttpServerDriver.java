@@ -28,13 +28,13 @@
 
 package org.opennms.pris.driver;
 
-import java.net.InetSocketAddress;
-import org.eclipse.jetty.rewrite.handler.RedirectPatternRule;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import java.nio.file.Path;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.opennms.pris.api.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,31 +67,34 @@ public class HttpServerDriver implements Driver {
 
     @Override
     public void run() throws Exception {
-        // Create an embedded jetty instance
-        final Server server = new Server(new InetSocketAddress(this.config.getString("host", "127.0.0.1"),
-                this.config.getInt("port", 8000)));
-        
-        
+        // Create an embedded jetty instance bound to the configured host/port
+        final Server server = new Server();
+        final ServerConnector connector = new ServerConnector(server);
+        connector.setHost(this.config.getString("host", "127.0.0.1"));
+        connector.setPort(this.config.getInt("port", 8000));
+        server.addConnector(connector);
+
         ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection();
-        
+
         // custom handling for requisitions
         RequisitionProviderHandler requisitionProviderHandler = new RequisitionProviderHandler();
-        ContextHandler contextHandlerRequisitions = new ContextHandler("/requisitions");
-        contextHandlerRequisitions.setHandler(requisitionProviderHandler);
+        ContextHandler contextHandlerRequisitions = new ContextHandler(requisitionProviderHandler, "/requisitions");
         contextHandlerCollection.addHandler(contextHandlerRequisitions);
-        
+
         // provide the documentation
         ResourceHandler docuResourceHandler = new ResourceHandler();
-        docuResourceHandler.setDirectoriesListed(true);
-        docuResourceHandler.setWelcomeFiles(new String[]{"index.html"});
-        docuResourceHandler.setResourceBase("./documentation/");
+        docuResourceHandler.setDirAllowed(true);
+        docuResourceHandler.setWelcomeFiles("index.html");
+        // Use a normalized absolute path: Jetty 12 refuses to serve a base
+        // resource it considers an alias, which a relative "./documentation/"
+        // path (with its "." segment) is flagged as.
+        docuResourceHandler.setBaseResource(ResourceFactory.of(docuResourceHandler)
+                .newResource(Path.of("documentation").toAbsolutePath().normalize()));
 
-        // redirecting http://ip:port/ to the docu
-
-        ContextHandler rootContext = new ContextHandler("/");
-        rootContext.setHandler(docuResourceHandler);
+        // serve the docu at the root
+        ContextHandler rootContext = new ContextHandler(docuResourceHandler, "/");
         contextHandlerCollection.addHandler(rootContext);
-        
+
         server.setHandler(contextHandlerCollection);
 
         server.start();
