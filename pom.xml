@@ -42,7 +42,7 @@
         <glassfishJaxbVersion>4.0.6</glassfishJaxbVersion>
         <jakartaXmlBindApiVersion>4.0.2</jakartaXmlBindApiVersion>
         <jaxbVersion>4.0.16</jaxbVersion>
-        <jettyServerVersion>10.0.24</jettyServerVersion>
+        <jettyServerVersion>12.1.11</jettyServerVersion>
         <junitVersion>4.13.2</junitVersion>
         <mavenAssemblyPluginVersion>3.8.0</mavenAssemblyPluginVersion>
         <mavenCompilerPluginVersion>3.15.0</mavenCompilerPluginVersion>
