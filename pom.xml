@@ -34,7 +34,7 @@
         <commonsConfigurationVersion>2.15.1</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
         <commonsLang3Version>3.20.0</commonsLang3Version>
-        <commonsLoggingVersion>1.3.6</commonsLoggingVersion>
+        <commonsLoggingVersion>1.4.0</commonsLoggingVersion>
         <downloadMavenPluginVersion>1.13.0</downloadMavenPluginVersion>
         <groovyVersion>5.0.7</groovyVersion>
         <hamcrestVersion>3.0</hamcrestVersion>
