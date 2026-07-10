@@ -17,6 +17,11 @@
 
     <properties>
         <ocsInventoryClientVersion>1.0.1</ocsInventoryClientVersion>
+        <!-- Legacy javax.xml.bind API for the javax-annotated OCS inventory
+             model. Kept on JAXB 2.x because ocs.inventory.client is a
+             third-party javax artifact; it is unrelated to the Jakarta
+             requisition-model JAXB stack and must not be migrated here. -->
+        <ocsJaxbApiVersion>2.3.1</ocsJaxbApiVersion>
     </properties>
 
     <dependencies>
@@ -25,6 +30,29 @@
             <groupId>org.opennms</groupId>
             <artifactId>ocs.inventory.client</artifactId>
             <version>${ocsInventoryClientVersion}</version>
+        </dependency>
+        <!-- The OCS inventory model is javax.xml.bind-annotated, so this plugin
+             marshals it with the legacy javax JAXB API. Pull that API from the
+             distinct javax.xml.bind:jaxb-api GA so it does not collide with the
+             requisition model's jakarta.xml.bind:jakarta.xml.bind-api 4.x
+             (same-GA/different-version would drop one package set, e.g. in the
+             aggregate javadoc). -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${ocsJaxbApiVersion}</version>
+            <exclusions>
+                <!--
+                    The activation classes are already provided by the
+                    com.sun.activation:jakarta.activation reference
+                    implementation pulled in by jaxws-rt; drop this redundant
+                    API jar to avoid duplicate classes in the shaded uber-jar.
+                -->
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
@@ -41,6 +69,17 @@
                     <groupId>jakarta.activation</groupId>
                     <artifactId>jakarta.activation-api</artifactId>
                 </exclusion>
+                <!--
+                    jakarta.xml.bind-api 2.3.x still ships the javax.xml.bind
+                    package, but under the same GA as the requisition model's
+                    jakarta.xml.bind-api 4.x. Exclude it here so the javax API
+                    is supplied solely by the distinct javax.xml.bind:jaxb-api
+                    GA above and cannot clash with the 4.x jakarta API.
+                -->
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -48,6 +87,19 @@
             <artifactId>jaxws-rt</artifactId>
             <version>2.3.7</version>
             <scope>runtime</scope>
+            <exclusions>
+                <!--
+                    jaxws-rt (and its jaxb-impl) pull jakarta.xml.bind-api 2.3.x,
+                    which ships the javax.xml.bind package under the same GA as
+                    the requisition model's jakarta.xml.bind-api 4.x. Exclude it
+                    so the javax API is supplied solely by javax.xml.bind:jaxb-api
+                    above (no duplicate classes, no 2.3.x/4.x GA clash).
+                -->
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Tests -->

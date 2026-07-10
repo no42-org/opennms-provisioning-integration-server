@@ -57,9 +57,9 @@ import org.opennms.pris.model.RequisitionMonitoredService;
 import org.opennms.pris.model.RequisitionNode;
 import org.opennms.pris.util.RequisitionUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 
 public class XlsSourceTest {
 
