@@ -38,18 +38,14 @@
         <hamcrestVersion>3.0</hamcrestVersion>
         <httpComponentsVersion>4.5.14</httpComponentsVersion>
         <ivyVersion>2.5.2</ivyVersion>
-        <jaxb2BasicsVersion>0.13.1</jaxb2BasicsVersion>
-        <jaxb2BasicsRuntimeVersion>0.13.1</jaxb2BasicsRuntimeVersion>
-        <jaxb2FluentApiVersion>3.0</jaxb2FluentApiVersion>
-        <jaxb2ValueConstructorVersion>3.0</jaxb2ValueConstructorVersion>
-        <jaxbApiVersion>2.3.1</jaxbApiVersion>
-        <jaxbCoreVersion>2.3.0.1</jaxbCoreVersion>
-        <jaxbImplVersion>2.3.9</jaxbImplVersion>
+        <angusActivationVersion>2.0.2</angusActivationVersion>
+        <glassfishJaxbVersion>4.0.6</glassfishJaxbVersion>
+        <jakartaXmlBindApiVersion>4.0.2</jakartaXmlBindApiVersion>
+        <jaxbVersion>4.0.16</jaxbVersion>
         <jettyServerVersion>10.0.24</jettyServerVersion>
         <junitVersion>4.13.2</junitVersion>
         <mavenAssemblyPluginVersion>3.8.0</mavenAssemblyPluginVersion>
         <mavenCompilerPluginVersion>3.15.0</mavenCompilerPluginVersion>
-        <mavenJaxbPluginVersion>0.15.3</mavenJaxbPluginVersion>
         <mavenResourcesPluginVersion>3.2.0</mavenResourcesPluginVersion>
         <mavenShadePluginVersion>3.6.2</mavenShadePluginVersion>
         <metainfServicesVersion>1.11</metainfServicesVersion>
