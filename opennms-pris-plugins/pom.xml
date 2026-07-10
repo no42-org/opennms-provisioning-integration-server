@@ -46,7 +46,6 @@
     <modules>
         <module>opennms-pris-plugins-defaults</module>
         <module>opennms-pris-plugins-jdbc</module>
-        <module>opennms-pris-plugins-ocs</module>
         <module>opennms-pris-plugins-script</module>
         <module>opennms-pris-plugins-xls</module>
     </modules>

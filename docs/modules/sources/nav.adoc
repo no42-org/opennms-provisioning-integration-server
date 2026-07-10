@@ -4,7 +4,6 @@
 * xref:http.adoc[]
 * xref:jdbc.adoc[]
 * xref:merge.adoc[]
-* xref:ocs.adoc[]
 * xref:script.adoc[]
 * xref:xls.adoc[]
 * xref:csv.adoc[]

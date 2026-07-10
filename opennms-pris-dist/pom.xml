@@ -37,12 +37,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>opennms-pris-plugins-ocs</artifactId>
-            <version>${project.version}</version>
-            <classifier>shaded</classifier>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>opennms-pris-plugins-script</artifactId>
             <version>${project.version}</version>
             <classifier>shaded</classifier>
