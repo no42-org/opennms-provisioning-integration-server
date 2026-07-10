@@ -42,7 +42,7 @@
         <ivyVersion>2.5.3</ivyVersion>
         <angusActivationVersion>2.0.2</angusActivationVersion>
         <glassfishJaxbVersion>4.0.9</glassfishJaxbVersion>
-        <jakartaXmlBindApiVersion>4.0.2</jakartaXmlBindApiVersion>
+        <jakartaXmlBindApiVersion>4.0.5</jakartaXmlBindApiVersion>
         <jaxbVersion>4.0.16</jaxbVersion>
         <jettyServerVersion>12.1.11</jettyServerVersion>
         <junitVersion>4.13.2</junitVersion>
