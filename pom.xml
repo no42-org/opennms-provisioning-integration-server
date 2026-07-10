@@ -185,7 +185,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mavenCompilerPluginVersion}</version>
                 <configuration>
-                    <release>21</release>
+                    <release>25</release>
+                    <!-- JDK 23+ no longer runs annotation processors discovered on the
+                         compile classpath unless processing is explicitly requested. Force
+                         full processing so the metainf-services processor keeps generating
+                         the plugin SPI META-INF/services descriptors; without this the
+                         sources/drivers/mappers are silently undiscoverable at runtime. -->
+                    <proc>full</proc>
                     <!-- -processing: the metainf-services annotation processor deliberately
                          does not claim @MetaInfServices (so other processors can also see it),
                          and test frameworks use runtime annotations with no processor; the
