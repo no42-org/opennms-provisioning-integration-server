@@ -3,7 +3,7 @@
 [![CI](https://github.com/no42-org/opennms-provisioning-integration-server/actions/workflows/ci.yml/badge.svg)](https://github.com/no42-org/opennms-provisioning-integration-server/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/no42-org/opennms-provisioning-integration-server?sort=semver)](https://github.com/no42-org/opennms-provisioning-integration-server/releases)
 [![Container image](https://img.shields.io/badge/ghcr.io-no42--org%2Fpris-2496ED?logo=docker&logoColor=white)](https://github.com/no42-org/opennms-provisioning-integration-server/pkgs/container/pris)
-[![Java 21](https://img.shields.io/badge/Java-21-orange.svg?logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Java 25](https://img.shields.io/badge/Java-25-orange.svg?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 PRIS gets external information from your inventory into an OpenNMS requisition
@@ -91,7 +91,7 @@ Two example requisitions ship with the app and are reachable once it is running:
 
 Prerequisites (all must be on your `PATH`):
 
-- [OpenJDK] or another JDK 21 (`java`, `javac`)
+- [OpenJDK] or another JDK 25 (`java`, `javac`)
 - Apache [Maven] (`mvn`)
 - [git][git-scm] and `make`
 - An internet connection to download Maven dependencies
