@@ -30,7 +30,7 @@ The components from left to right are described as followed:
 - **OpenNMS Requisition**: The data model which has to be built inside of {page-component-title}. This is the shared model between _OpenNMS_ and {page-component-title}.
 - **Requisition configuration**: The description of the integration of your external datasource. A requisition configuration defines which source should be used or which scripts should be applied to modify or transform the data before they are provided into _OpenNMS Provisiond_.
 - **Mapper Script**: The mapper script is the last script executed before the generated requisition goes to _OpenNMS Provisiond_ through the driver. You can use a mapper script to enrich the requisition, remove nodes or replace OpenNMS requistion node attributes.
-- **Custom Scripts**: In some cases an external inventory has its own data model, e.g. OCS Inventory. The script source can be used to map the external inventory-specific model into the OpenNMS requisition model.
+- **Custom Scripts**: In some cases an external inventory has its own data model. The script source can be used to map the external inventory-specific model into the OpenNMS requisition model.
 - **Source**: This is the specific implementation retrieving the data for from your external inventory.
 - **External Inventory**: The inventory from which you want to import data for OpenNMS. It could be a free application like phpIPAM, idoIT, ITIL ticket system like OTRS, a simple spreadsheet or just another OpenNMS instance.
 
@@ -50,7 +50,6 @@ After extracting the archive the file structure should look like this:
 |   ├── httpExample
 |   ├── jdbcExample
 |   ├── mergeExample
-|   ├── ocsExample
 |   ├── scriptExample
 |   └── xlsExample
 ├── global.properties <3>

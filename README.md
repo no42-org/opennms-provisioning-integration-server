@@ -153,7 +153,7 @@ Maven multi-module project:
 | `opennms-pris-api` | Programming interfaces for configuration, mappers and data sources |
 | `opennms-pris-model` | The OpenNMS requisition model |
 | `opennms-pris-main` | The provisioning integration server itself |
-| `opennms-pris-plugins` | Data-source plugins: XLS, script, JDBC, OCS Inventory and defaults |
+| `opennms-pris-plugins` | Data-source plugins: XLS, script, JDBC and defaults |
 | `opennms-pris-dist` | Assembles the compiled code into a runnable, distributable archive |
 
 User and developer documentation lives under `docs/` and is built with [Antora].
