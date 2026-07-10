@@ -30,9 +30,11 @@
         <beanshellVersion>2.0b6</beanshellVersion>
         <chQosLogbackVersion>1.5.38</chQosLogbackVersion>
         <commonsBeanutilsVersion>1.11.0</commonsBeanutilsVersion>
+        <commonsCodecVersion>1.20.0</commonsCodecVersion>
         <commonsConfigurationVersion>2.15.1</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
         <commonsLang3Version>3.20.0</commonsLang3Version>
+        <commonsLoggingVersion>1.3.6</commonsLoggingVersion>
         <downloadMavenPluginVersion>1.13.0</downloadMavenPluginVersion>
         <groovyVersion>5.0.7</groovyVersion>
         <hamcrestVersion>3.0</hamcrestVersion>
@@ -117,6 +119,23 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commonsLang3Version}</version>
+            </dependency>
+            <!-- Pin commons-codec and commons-logging as the single source of truth (#33).
+                 Plugins shade their own copy and the distribution runs them on one flat
+                 `lib/*` classpath, where first-wins loading lets a stale version shadow the
+                 rest. Align on the highest required: commons-codec 1.20.0 (what Apache POI
+                 5.5.1 in the xls plugin is built against, a superset of the 1.11 httpclient
+                 uses) and commons-logging 1.3.6 (matches opennms-pris.jar, supersedes the
+                 1.2 httpclient pulls). -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commonsCodecVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commonsLoggingVersion}</version>
             </dependency>
 
             <!-- Web-Server -->
