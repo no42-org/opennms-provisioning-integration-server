@@ -40,7 +40,7 @@
         <hamcrestVersion>3.0</hamcrestVersion>
         <httpComponentsVersion>4.5.14</httpComponentsVersion>
         <ivyVersion>2.5.3</ivyVersion>
-        <angusActivationVersion>2.0.2</angusActivationVersion>
+        <angusActivationVersion>2.0.3</angusActivationVersion>
         <glassfishJaxbVersion>4.0.9</glassfishJaxbVersion>
         <jakartaXmlBindApiVersion>4.0.5</jakartaXmlBindApiVersion>
         <jaxbVersion>4.0.16</jaxbVersion>
