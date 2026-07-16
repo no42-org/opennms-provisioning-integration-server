@@ -39,7 +39,7 @@
         <groovyVersion>5.0.7</groovyVersion>
         <hamcrestVersion>3.0</hamcrestVersion>
         <httpComponentsVersion>4.5.14</httpComponentsVersion>
-        <ivyVersion>2.5.3</ivyVersion>
+        <ivyVersion>2.6.0</ivyVersion>
         <angusActivationVersion>2.0.3</angusActivationVersion>
         <glassfishJaxbVersion>4.0.9</glassfishJaxbVersion>
         <jakartaXmlBindApiVersion>4.0.5</jakartaXmlBindApiVersion>
