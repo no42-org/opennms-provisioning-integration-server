@@ -30,7 +30,7 @@
         <beanshellVersion>2.0b6</beanshellVersion>
         <chQosLogbackVersion>1.6.0</chQosLogbackVersion>
         <commonsBeanutilsVersion>1.11.0</commonsBeanutilsVersion>
-        <commonsCodecVersion>1.22.0</commonsCodecVersion>
+        <commonsCodecVersion>1.22.1</commonsCodecVersion>
         <commonsConfigurationVersion>2.15.1</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
         <commonsLang3Version>3.20.0</commonsLang3Version>
