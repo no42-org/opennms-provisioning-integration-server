@@ -33,7 +33,7 @@
         <commonsCodecVersion>1.23.0</commonsCodecVersion>
         <commonsConfigurationVersion>2.15.1</commonsConfigurationVersion>
         <commonsIoVersion>2.22.0</commonsIoVersion>
-        <commonsLang3Version>3.20.0</commonsLang3Version>
+        <commonsLang3Version>3.21.0</commonsLang3Version>
         <commonsLoggingVersion>1.4.0</commonsLoggingVersion>
         <downloadMavenPluginVersion>1.13.0</downloadMavenPluginVersion>
         <groovyVersion>6.0.0</groovyVersion>
