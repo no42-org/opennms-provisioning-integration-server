@@ -33,7 +33,7 @@ jobs:
       - name: Build documentation
         run: make docs
       - name: Upload site artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: docs-site
           path: public/
@@ -58,7 +58,7 @@ jobs:
       - name: Package release archives
         run: make package
       - name: Upload release archives
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: release-archives
           path: |
@@ -66,7 +66,7 @@ jobs:
             opennms-pris-dist/target/opennms-pris-release-archive.zip
       - name: Upload javadoc artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: javadoc
           path: target/*-javadoc.jar
@@ -87,7 +87,7 @@ jobs:
         run: make smoke-test
       - name: Upload smoke test results
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: smoke-test-results
           if-no-files-found: ignore
